@@ -1,31 +1,118 @@
 <?php
 
-//require_once "database.php";
-//
-//$ListDB = new \database\database();
-//
-//$List = array();
-//
-//try {
-//    $connect = $ListDB->newDB();
-//    $connect->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
-//    $sql = "select * from request";
-//
-//    $List = $connect->query($sql);
-//
-//    foreach ($List as $a){
-//        echo $a["seq"];
-//    }
-//
-//    echo '성공';
-//}
-//catch (PDOException $ex){
-//    echo '실패:'.$ex->getMessage();
-//}
-//$connect = null;
+
+$papa = null;
+$searchString = "null";
+$Date = "null";
+
+echo $_SERVER["QUERY_STRING"];
+
+$Qstring = $_SERVER["QUERY_STRING"];
+
+if(str_contains($Qstring,'page')){
+    $papa = $_GET['page'];
+}
+else if(str_contains($Qstring,'searchString')){
+    $searchString = $_GET['searchString'];
+}
 
 
 ?>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+    let str1 = "";
+    let remain_List_Page = <?php echo $papa?>;
+
+    let list_view_num = 5;
+
+    let MaxPage = 0;
+
+    let pageList = "";
+
+    function List(page) {
+        $.ajax({
+            url: "ListPageProcess.php",
+            data:{
+                searchString : <?php echo $searchString ?>,
+                Date : <?php echo $Date ?>
+            },
+            async: false,
+            type: "POST",
+            dataType: "JSON",
+            success: function (data) {
+
+                let List = [];
+
+                $.each(data, function (i) {
+                    List.push(data[i]);
+                })
+
+                MaxPage = Math.floor(List.length/list_view_num);
+
+                List.reverse();
+
+                let rePage = [];
+
+                rePage = List.slice(page * list_view_num, page * list_view_num + list_view_num);
+
+                str1 = "";
+                pageList = "";
+
+                for (let i = 0; i < rePage.length; i++) {
+                    let Seq = "seq=" + rePage[i]['seq'];
+                    str1 +=
+                        "<tr>" +
+                        "<td>" + rePage[i]['seq'] + "</td>" +
+                        "<td>" + rePage[i]['mainCategory'] + "</td>" +
+                        "<td>" + "<a href='getPage.php?" + Seq + "'" + ">" + rePage[i]['content'] + "</a>" + "</td>" +
+                        "<td>" + rePage[i]['fileName'] + "</td>" +
+                        "<td>" + rePage[i]['upload_Date'] + "</td>" +
+                        "<td>" + rePage[i]['writer'] + "</td>" +
+                        "<td>" + rePage[i]['count'] + "</td>" +
+                        "</tr>"
+                }
+
+                let pageArr = [];
+
+                pageList += "<a href=ListPage.php?page=0>" + "◀◀" + "</a>";
+
+                if(remain_List_Page < 3){
+                    for(let i=0; i<5; i++){
+                        if(i === MaxPage+1){
+                            break;
+                        }
+                        pageArr.push(i);
+                    }
+                }
+                else{
+                    for(let i=remain_List_Page-2; i<=remain_List_Page+2; i++){
+                        if(i === MaxPage+1){
+                            break;
+                        }
+                        pageArr.push(i);
+                    }
+                }
+
+                console.log(remain_List_Page)
+                console.log(pageArr)
+
+                for(let i=0; i<pageArr.length; i++){
+                    pageList += "<a href=ListPage.php?page="+ pageArr[i] + ">" + (pageArr[i]+1) + "</a>";
+                }
+
+                pageList += "<a href=ListPage.php?page="+ MaxPage + ">" + "▶▶" + "</a>";
+                
+
+            }
+        })
+    }
+
+    <?php
+    echo "List($papa)";
+    ?>
+
+</script>
 
 <style>
     .List_Main_Box {
@@ -90,55 +177,18 @@
                     <td style="width: 90px">작성자</td>
                     <td style="width: 90px">조회수</td>
                 </tr>
-                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-                <script type="text/javascript">
 
-                    let str1 = "";
-                    let remain_List_Page = 1;
-                    let list_view_num = 10;
-
-                    $.ajax({
-                        url: "ListPageProcess.php",
-                        async:false,
-                        type: "get",
-                        dataType:"JSON",
-                        success:function (data){
-
-                            let List = [];
-
-                            $.each(data, function (i){
-                                List.push(data[i]);
-                            })
-                            console.log(List[3]['customerType']);
-                            for(let i=0; i<List.length; i++){
-                                str1 +=
-                                    "<tr>"+
-                                    "<td>" + List[i]['seq'] + "</td>" +
-                                    "<td>" + List[i]['mainCategory'] + "</td>" +
-                                    "<td>" + List[i]['title'] + "</td>" +
-                                    "<td>" + List[i]['fileName'] + "</td>" +
-                                    "<td>" + List[i]['upload_Date'] + "</td>" +
-                                    "<td>" + List[i]['writer'] + "</td>" +
-                                    "<td>" + List[i]['seq'] + "</td>" +
-                                    "</tr>"
-                            }
-                        }
-                    })
-
-                    function getRquest (seq){
-                        
-                    }
-
+                <script>
+                    document.write(str1);
                 </script>
-
-                <?php
-                $ww = "<script>document.write(str1);</script>";
-                echo ($ww);
-                ?>
-
 
             </table>
         </form>
+    </div>
+    <div>
+        <script>
+            document.write(pageList);
+        </script>
     </div>
 </div>
 
