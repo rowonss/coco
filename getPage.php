@@ -87,7 +87,7 @@ $connect = null;
             </tr>
             <tr>
                 <td><p>내용</p></td>
-                <td><?php echo "$content" ?></td>
+                <td style="width: 500px; height: 300px;"><?php echo "$content" ?></td>
             </tr>
             <tr>
                 <td><p>첨부파일</p></td>
