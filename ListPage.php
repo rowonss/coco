@@ -4,6 +4,8 @@ $papa = null;
 $searchtitle = "";
 $searchwriter = "";
 $searchDate = "";
+$searchStartDate = "";
+$searchEndDate = "";
 
 $Qstring = $_SERVER["QUERY_STRING"];
 
@@ -16,8 +18,11 @@ if (str_contains($Qstring, 'searchtitle')) {
 if (str_contains($Qstring, 'searchwriter')) {
     $searchwriter = $_GET['searchwriter'];
 }
-if (str_contains($Qstring, 'searchDate')) {
-    $searchDate = $_GET['searchDate'];
+if (str_contains($Qstring, 'searchStartDate')) {
+    $searchStartDate = $_GET['searchStartDate'];
+}
+if (str_contains($Qstring, 'searchEndDate')) {
+    $searchEndDate = $_GET['searchEndDate'];
 }
 
 ?>
@@ -64,7 +69,9 @@ if (str_contains($Qstring, 'searchDate')) {
 
     let searchwriter = "";
 
-    let searchDate = "";
+    let searchStartDate = "";
+
+    let searchEndDate = "";
 
     if (QString.has("searchtitle")) {
         searchtitle = QString.get("searchtitle");
@@ -72,7 +79,10 @@ if (str_contains($Qstring, 'searchDate')) {
     if (QString.has("searchwriter")) {
         searchwriter = QString.get("searchwriter");
     }
-
+    if (QString.has("searchStartDate")) {
+        searchStartDate = QString.get("searchStartDate");
+        searchEndDate = QString.get("searchEndDate");
+    }
 
     let list_view_num = 5;
 
@@ -84,7 +94,6 @@ if (str_contains($Qstring, 'searchDate')) {
 
     let fail = false;
 
-
     function List(page) {
 
         $.ajax({
@@ -92,7 +101,8 @@ if (str_contains($Qstring, 'searchDate')) {
             data: {
                 searchtitle: searchtitle,
                 searchwriter: searchwriter,
-                searchDate: searchDate
+                searchStartDate: searchStartDate.replaceAll("-",""),
+                searchEndDate: searchEndDate.replaceAll("-","")
             },
             async: false,
             type: "POST",
@@ -102,7 +112,7 @@ if (str_contains($Qstring, 'searchDate')) {
 
                 let List = [];
 
-                if(data.length === 0){
+                if (data.length === 0) {
                     fail = true;
                 }
 
@@ -173,8 +183,12 @@ if (str_contains($Qstring, 'searchDate')) {
                 pageList += "<a class='pageArrow' style='cursor: pointer' onclick='ToLastPage()'>" + "》" + "</a>";
 
             },
+            error: function (data){
+                console.log(data)
+            }
+            ,
 
-            complete : function (){
+            complete: function () {
                 if (remain_List_Page > MaxPage) {
                     ToLastPage();
                 }
@@ -197,7 +211,10 @@ if (str_contains($Qstring, 'searchDate')) {
             Str += "&searchtitle=" + searchtitle;
         }
         if (searchwriter !== "") {
-            Str += "&searchwriter=" + searchwriter
+            Str += "&searchwriter=" + searchwriter;
+        }
+        if (searchStartDate !== "") {
+            Str += "&searchStartDate=" + searchStartDate + "&searchEndDate=" + searchEndDate;
         }
 
         return Str;
@@ -210,11 +227,10 @@ if (str_contains($Qstring, 'searchDate')) {
     }
 
     function ToFirstPage() {
-        if(fail){
+        if (fail) {
             alert("검색 결과가 없습니다");
-            location.href="ListPage.php?page=0";
-        }
-        else{
+            location.href = "ListPage.php?page=0";
+        } else {
             let page = "page=0"
             let param = MakeURL();
             location.href = "ListPage.php?" + page + param;
@@ -289,8 +305,8 @@ if (str_contains($Qstring, 'searchDate')) {
                 <li><label><input type="text" onchange="searchwriter = this.value" value="<?php echo $searchwriter ?>"></label>
                 </li>
                 <li><p>작성일</p></li>
-                <li><label><input type="date" name="Date" onchange="" value=""></label>~<label>
-                        <input type="date" onchange="" value=""></label></li>
+                <li><label><input type="date" onchange="searchStartDate = this.value" value="<?php echo $searchStartDate ?>"></label>~<label>
+                        <input type="date" onchange="searchEndDate = this.value" value="<?php echo $searchEndDate ?>"></label></li>
                 <li><label><input type="button" onclick="ToFirstPage()"></label></li>
             </ul>
         </form>

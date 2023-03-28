@@ -30,7 +30,7 @@
     }
 </style>
 <div>
-    <form name="InsertForm" action="InsertProcess.php" method="post"
+    <form name="InsertForm" action="InsertProcess.php" method="post" enctype="multipart/form-data"
           style="width:700px; margin-left: auto; margin-right: auto">
         <table>
             <tr>
@@ -98,9 +98,9 @@
                 <td><p>첨부파일</p></td>
                 <td>
                     <label>
-                        <input type="text" id="fileName" name="Insert_fileName">
+                        <input type="text" id="fileName" name="Insert_fileName" readonly>
                         <input type="file" name="Insert_file" style="color: transparent"
-                               onchange="document.getElementById('fileName').value=this.value"
+                               onchange="document.getElementById('fileName').value=this.files[0].name"
                     </label>
                 </td>
             </tr>
