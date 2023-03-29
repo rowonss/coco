@@ -105,7 +105,7 @@
                 </td>
             </tr>
         </table>
-        <input type="button" onclick="check()">
+        <input type="button" onclick="check()" value="확인">
     </form>
 </div>
 

@@ -138,12 +138,19 @@ if (str_contains($Qstring, 'searchEndDate')) {
 
                 for (let i = 0; i < rePage.length; i++) {
                     let Seq = "seq=" + rePage[i]['seq'];
+
+                    let img ="";
+
+                    if(rePage[i]['fileName'] !== ""){
+                        img = "<img src='img/file_icon.png' alt='img'>";
+                    }
+
                     str1 +=
                         "<tr>" +
                         "<td>" + rePage[i]['seq'] + "</td>" +
                         "<td>" + rePage[i]['mainCategory'] + "</td>" +
-                        "<td>" + "<a href='getPage.php?" + Seq + "'" + ">" + rePage[i]['content'] + "</a>" + "</td>" +
-                        "<td>" + rePage[i]['fileName'] + "</td>" +
+                        "<td>" + "<a href='getPage.php?" + Seq + "'" + ">" + rePage[i]['title'] + "</a>" + "</td>" +
+                        "<td>" + img + "</td>" +
                         "<td>" + rePage[i]['upload_Date'] + "</td>" +
                         "<td>" + rePage[i]['writer'] + "</td>" +
                         "<td>" + rePage[i]['count'] + "</td>" +
@@ -307,7 +314,7 @@ if (str_contains($Qstring, 'searchEndDate')) {
                 <li><p>작성일</p></li>
                 <li><label><input type="date" onchange="searchStartDate = this.value" value="<?php echo $searchStartDate ?>"></label>~<label>
                         <input type="date" onchange="searchEndDate = this.value" value="<?php echo $searchEndDate ?>"></label></li>
-                <li><label><input type="button" onclick="ToFirstPage()"></label></li>
+                <li><label><input type="button" onclick="ToFirstPage()" value="검색"></label></li>
             </ul>
         </form>
     </div>
@@ -336,6 +343,9 @@ if (str_contains($Qstring, 'searchEndDate')) {
         <script>
             document.write(pageList);
         </script>
+    </div>
+    <div>
+        <a style="border: 1px solid black; border-radius: 5px; padding: 5px" href="InsertPage.php">글 작성</a>
     </div>
 </div>
 

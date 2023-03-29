@@ -13,7 +13,7 @@ $customerType = "";
 $title = "";
 $content = "";
 $file = "";
-$fileName = "";
+$beforeFileName = "";
 
 try {
     $connect = $getpageDB->newDB();
@@ -29,7 +29,7 @@ try {
         $category = $a['catgegory'];
         $customerType = $a['customerType'];
         $title = $a['title'];
-        $fileName = $a['fileName'];
+        $beforeFileName = $a['fileName'];
     }
 }
 catch (PDOException $ex){
@@ -138,18 +138,34 @@ $connect = null;
                 <td><p>첨부파일</p></td>
                 <td>
                     <label>
-                        <input type="text" id="fileName" name="Insert_fileName" value="<?php echo $fileName ?>" readonly>
-                        <input type="file" name="Insert_file" style="color: transparent"
+                        <input type="text" id="fileName" name="Insert_fileName" value="<?php echo $beforeFileName ?>" readonly>
+                        <input type="file" id="fileinput" name="Insert_file" style="color: transparent"
                                onchange="document.getElementById('fileName').value=this.files[0].name">
                     </label>
+                    <input type="button" id="delButton" onclick="fileDelete()" value="파일삭제">
                 </td>
             </tr>
         </table>
-        <input type="button" onclick="check()">
+        <input type="hidden" name="beforeFileName" value="<?php echo $beforeFileName ?>">
+        <input type="hidden" name="fileDeleted">
+        <input type="button" onclick="check()" value="확인">
+        <input type="button" onclick="history.back()" value="취소">
     </form>
 </div>
 
 <script>
+
+    let fileUpdate = false;
+
+    function fileDelete(){
+        if(window.confirm("파일을 삭제하시겠습니까?\n확인 시 반영됩니다")){
+            document.getElementById('fileName').value="Deleted";
+            $("input[name=fileDeleted]").attr("value","Deleted");
+
+            $("input[id=delButton]").attr("hidden","hidden");
+            $("input[id=fileinput]").attr("hidden","hidden");
+        }
+    }
 
     function check() {
         if (maincategory === 0) {
